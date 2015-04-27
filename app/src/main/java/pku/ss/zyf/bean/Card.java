@@ -12,6 +12,9 @@ public class Card {
     public Card(int value){
         this.value = value;
     }
+    public Card(){
+        this.value = 0;
+    }
 
     public int getValue() {
         return value;

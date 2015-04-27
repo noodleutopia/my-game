@@ -13,7 +13,6 @@ public class SetCards {
 
 
     // 声明一副扑克牌
-//    public Card[] cards;
     private Card cards[] = new Card[44];
     private static SetCards cardsInstance = null;
     private int position[] = new int[44];
@@ -24,10 +23,21 @@ public class SetCards {
     }
 
     public static SetCards getInstance() {
-        if (cardsInstance == null) {
-            cardsInstance = new SetCards();
-        }
+        cardsInstance = new SetCards();
         return cardsInstance;
+    }
+
+    public int getCardsNumber(){
+        return cards.length;
+    }
+
+    public Card[] getAllCards(){
+        return cards;
+    }
+
+    public Card getCard(int cardNo){
+        Card card = cards[cardNo];
+        return card;
     }
 
     /**
