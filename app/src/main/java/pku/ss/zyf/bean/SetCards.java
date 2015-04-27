@@ -3,7 +3,6 @@ package pku.ss.zyf.bean;
 import android.util.Log;
 
 import java.util.Random;
-import pku.ss.zyf.bean.Card;
 
 /**
  * User: ZhangYafei(261957725@qq.com)
