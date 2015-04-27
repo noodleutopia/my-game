@@ -71,7 +71,6 @@ public class SetCards {
         }
         cards = temp;
         for (int i = 0; i<44; i++){
-//            cards[i].setValue(temp[i].getValue());
             Log.d("TEST", String.valueOf(cards[i].getValue()));
         }
     }
