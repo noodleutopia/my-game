@@ -23,8 +23,10 @@
             android:src="@drawable/ai_img"/>
         <TextView
             android:id="@+id/ai_hold_cards"
+            android:singleLine="true"
+            android:ellipsize="start"
             android:layout_toRightOf="@id/ai_image"
-            android:layout_marginLeft="30dp"
+            android:layout_marginLeft="10dp"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:textSize="50sp"
@@ -49,13 +51,40 @@
             android:src="@drawable/walle"/>
         <TextView
             android:id="@+id/player_1_hold_cards"
+            android:singleLine="true"
+            android:ellipsize="start"
             android:layout_toRightOf="@id/player_1_image"
-            android:layout_marginLeft="30dp"
-            android:layout_width="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:textSize="50sp"
             android:text=""
             android:textColor="#ffffffff"
+            />
+
+        <Button
+            android:id="@+id/transform_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/player_1_hold_cards"
+            android:text="可能1"
+            android:visibility="gone"
+            />
+        <Button
+            android:id="@+id/transform_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/transform_1"
+            android:text="可能2"
+            android:visibility="gone"
+            />
+        <Button
+            android:id="@+id/transform_3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/transform_2"
+            android:text="可能3"
+            android:visibility="gone"
             />
         <Button
             android:id="@+id/transform_card"
@@ -82,7 +111,7 @@
         android:background="#ffaaaaaa">
         <TextView
             android:id="@+id/ai_move_title"
-            android:layout_width="50dp"
+            android:layout_width="55dp"
             android:layout_height="70dp"
             android:layout_marginLeft="5dp"
             android:text="AI:"
@@ -98,7 +127,7 @@
             android:textColor="#ffffffff"/>
         <TextView
             android:id="@+id/player_1_move_title"
-            android:layout_width="50dp"
+            android:layout_width="55dp"
             android:layout_height="70dp"
             android:layout_marginLeft="5dp"
             android:text="Player:"
@@ -126,18 +155,20 @@
             android:id="@+id/start_btn"
             android:layout_below="@id/game_condition"
             android:layout_alignParentRight="true"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+
+            android:layout_width="100dp"
+            android:layout_height="40dp"
             android:text="开始"/>
         <TextView
             android:id="@+id/bottom_cards"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="底牌数量：44"
-            android:textSize="25sp"
+            android:textSize="15sp"
             android:textColor="#aa534654"
+            android:layout_below="@id/start_btn"
             android:layout_alignParentRight="true"
-            android:layout_alignParentBottom="true"/>
+            />
     </RelativeLayout>
     </RelativeLayout>
 

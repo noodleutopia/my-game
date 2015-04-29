@@ -2,8 +2,11 @@ package pku.ss.zyf.mygame_2q48;
 
 import java.lang.reflect.Array;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
+import pku.ss.zyf.Utils.MyComparator;
 import pku.ss.zyf.bean.Card;
 
 /**
@@ -13,8 +16,13 @@ import pku.ss.zyf.bean.Card;
  */
 public class GamePlay {
 
-    private Card[] myHold;
-    private Card[] aiHold = new Card[5];
+//    private Card[] myHold = new Card[5];
+//    private Card[] aiHold = new Card[5];
+
+    private List<Card> myHold;
+    private List<Card> aiHold;
+
+    private MyComparator comparator = new MyComparator();
 
 //    private int [] myHoldValue =new int[5];
 //    private int [] aiHoldValue =new int[5];
@@ -50,56 +58,42 @@ public class GamePlay {
         return result;
     }
 
-    public Card[] getMyHold() {
+    public List<Card> getMyHold() {
+        Collections.sort(myHold,comparator);
         return myHold;
     }
 
-    public void setMyHold(Card[] myHold) {
+    public void setMyHold(List<Card> myHold) {
         this.myHold = myHold;
     }
 
-    public Card[] getAiHold() {
+    public List<Card> getAiHold() {
+        Collections.sort(aiHold,comparator);
         return aiHold;
     }
 
-    public void setAiHold(Card[] aiHold) {
+    public void setAiHold(List<Card> aiHold) {
         this.aiHold = aiHold;
     }
 
     public int[] getMyHoldValue(){
 
         int[] result;
-        if (myHold[4].getValue() == 0){
-             result = new int[4];
-            for (int i = 0; i < 4; i++){
-                result[i] = myHold[i].getValue();
-            }
-        }else{
-             result = new int[5];
-            for (int i = 0; i < 5; i++){
-                result[i] = myHold[i].getValue();
-            }
+        Collections.sort(myHold,comparator);
+        result = new int[myHold.size()];
+        for (int i = 0; i < myHold.size(); i++){
+            result[i] = myHold.get(i).getValue();
         }
-
-        Arrays.sort(result);
         return result;
     }
     public int[] getAiHoldValue(){
 
         int[] result;
-        if (aiHold[4].getValue() == 0){
-            result = new int[4];
-            for (int i = 0; i < 4; i++){
-                result[i] = aiHold[i].getValue();
-            }
-        }else{
-            result = new int[5];
-            for (int i = 0; i < 5; i++){
-                result[i] = aiHold[i].getValue();
-            }
+        Collections.sort(aiHold,comparator);
+        result = new int[aiHold.size()];
+        for (int i = 0; i < aiHold.size(); i++){
+            result[i] = aiHold.get(i).getValue();
         }
-
-        Arrays.sort(result);
         return result;
     }
 }

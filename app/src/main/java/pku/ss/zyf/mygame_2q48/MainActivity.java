@@ -23,7 +23,7 @@ import pku.ss.zyf.bean.SetCards;
 public class MainActivity extends Activity implements View.OnClickListener {
 
     private TextView gameConditionTv, aiHoldTv, playerHoldTv_1, bottomCardsTv, aiMoveTv, playMoveTv_1 ;
-    private Button startBtn, transformBtn, chargeBtn;
+    private Button startBtn, transformBtn, chargeBtn, transBtn_1, transBtn_2, transBtn_3;
     public static final int GAME_START = 0;
     public static final int PLAYER_1_TURN = 1;
     public static final int AI_TURN = 2;
@@ -32,12 +32,14 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     private static final int START_GAME = 1;
     private static final int STOP_GAME = 2;
-    private List<Card> bottomCards;
+    private List<Card> bottomCards;     //底牌
 
     private int nowCondition = GAME_OVER;
-//    private int nowbottomCards = 44;
+    private int stopFlag = 0;
     private int winner = 0;
     private int flag = 0;
+    private int[] transPosition = new int[2];   //换牌手牌位置
+    private int[] chargePosition = new int[2];  //钓牌手牌位置
 
     private GamePlay gamePlay = new GamePlay();
 
@@ -69,6 +71,12 @@ public class MainActivity extends Activity implements View.OnClickListener {
         transformBtn.setOnClickListener(this);
         chargeBtn = (Button) findViewById(R.id.charge_card);
         chargeBtn.setOnClickListener(this);
+        transBtn_1 = (Button) findViewById(R.id.transform_1);
+        transBtn_1.setOnClickListener(this);
+        transBtn_2 = (Button) findViewById(R.id.transform_2);
+        transBtn_2.setOnClickListener(this);
+        transBtn_3 = (Button) findViewById(R.id.transform_3);
+        transBtn_3.setOnClickListener(this);
 
     }
 
@@ -77,7 +85,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
      */
     private void initCards(){
         bottomCards  = new ArrayList<Card>();
-        Log.d("TEST","initCards is called !");
+        Log.d("TEST", "initCards is called !");
         SetCards setCards = SetCards.getInstance();
         //初始化底牌
         for (int i = 0; i < setCards.getCardsNumber(); i++ ){
@@ -92,19 +100,19 @@ public class MainActivity extends Activity implements View.OnClickListener {
         aiMoveTv.setText("抓4张牌");
         playMoveTv_1.setText("抓4张牌");
 
-        Card [] aiHold = new Card[5];
-        Card [] playerHold = new Card[5];
+        List<Card> aiHold = new ArrayList<Card>();
+        List<Card> playerHold = new ArrayList<Card>();
 
-        for (int i = 0; i < 5; i++){
-            playerHold[i] = new Card(0);
-            aiHold[i] = new Card(0);
-        }
+//        for (int i = 0; i < 5; i++){
+//            playerHold[i] = new Card(0);
+//            aiHold[i] = new Card(0);
+//        }
         //首次分发手牌，每个人4张
         for (int i = 0; i < 4; i++){
-                playerHold[i].setValue(bottomCards.remove(0).getValue());
+                playerHold.add(bottomCards.remove(0));
             }
         for (int i = 0; i < 4; i++){
-                aiHold[i].setValue(bottomCards.remove(0).getValue());
+                aiHold.add(bottomCards.remove(0));
             }
 //        if (flag % 2 == 0){
 //            for (int i = 0; i < 4; i++){
@@ -144,34 +152,22 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     }
 
+    /**
+     * 玩家回合
+     * @param playerNo 玩家编号
+     */
     private void playerTurn(int playerNo){
         nowCondition = GAME_WAIT;
         int [] myHoldValue = gamePlay.getMyHoldValue();
-        int chooseMove; //行动标记，1为换牌，2为钓牌
 
         transformBtn.setVisibility(View.VISIBLE);
         chargeBtn.setVisibility(View.VISIBLE);
 
-
-        //判断当前手牌可能行动
-        if (myHoldValue[0] == myHoldValue[1]){
-            //可以换牌
-            if(myHoldValue[1] == myHoldValue[2]){
-                //可以钓牌
-            }
-        }
-        else if (myHoldValue[1] == myHoldValue[2]){
-            //可以换牌
-            if (myHoldValue[2] == myHoldValue[3]){
-                //可以钓牌
-            }
-        }
-        else if(myHoldValue[2] == myHoldValue[3]){
-            //可以换牌
-        }
-
     }
 
+    /**
+     * AI回合
+     */
     private void aiTurn(){
         nowCondition = GAME_WAIT;
     }
@@ -257,6 +253,56 @@ public class MainActivity extends Activity implements View.OnClickListener {
     }
 
     /**
+     * 换牌或钓牌逻辑
+     * @param flag 标记
+     */
+    private void transformOrCharge(int flag){
+        int [] myHoldValue = gamePlay.getMyHoldValue();
+        //若换牌，手牌一定有5张
+        if (flag == 1){
+            List<String> btnTitle = new ArrayList<>();
+            int i = 0;
+            int j = 0;
+            while(i < (myHoldValue.length - 1)){
+                if (myHoldValue[i] == myHoldValue[i+1]){
+                    if (btnTitle.size() == 0){
+                        transPosition[j++] = i; //记录换牌位置
+                        if (myHoldValue[i] == 8){
+                            btnTitle.add("换个Q");
+                        }
+                        else
+                            btnTitle.add("换个" + myHoldValue[i] * 2);
+                    }
+                    else if (myHoldValue[i] != myHoldValue[i-1]){
+                        transPosition[j++] = i; //记录换牌位置
+                        if (myHoldValue[i] == 8){
+                            btnTitle.add("换个Q");
+                        }
+                        else
+                            btnTitle.add("换个" + myHoldValue[i] * 2);
+                    }
+                }
+                i++;
+            }//endWhile;
+            //显示按钮
+            if (btnTitle.size() > 0){
+                transBtn_1.setVisibility(View.VISIBLE);
+                transBtn_1.setText(btnTitle.get(0));
+                if (btnTitle.size() > 1){
+                    transBtn_2.setVisibility(View.VISIBLE);
+                    transBtn_2.setText(btnTitle.get(1));
+                }
+            }
+        }
+
+        //若钓牌
+        if (flag == 2){
+
+        }
+
+    }
+
+    /**
      * 主线程消息处理机
      */
     private Handler mHandler = new Handler() {
@@ -279,6 +325,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
+        //点击开始按钮
         if (v.equals(startBtn)){
             startBtn.setVisibility(View.GONE);
             nowCondition = GAME_START;
@@ -288,18 +335,67 @@ public class MainActivity extends Activity implements View.OnClickListener {
             msg.what = START_GAME;
             mHandler.sendMessage(msg);
         }
+        //点击换牌按钮
         if (v.equals(transformBtn)){
-            playMoveTv_1.setText("准备换牌");
+
             //抓一张牌
             Card card = bottomCards.remove(0);
-            Card [] myHold = gamePlay.getMyHold();
-            myHold[4] = card;
+//            Log.d("TEST","bottomTop is : " + card.getValue());
+            List<Card> myHold = gamePlay.getMyHold();
+            myHold.add(card);
             //更新手牌
             gamePlay.setMyHold(myHold);
             drawHolds(gamePlay.getAiHoldValue(), gamePlay.getMyHoldValue());
-        }
-        if (v.equals(chargeBtn)){
+            playMoveTv_1.setText("抓了一张 " + card.getValue() +",准备换牌");
+            transformOrCharge(1);
+            v.setVisibility(View.GONE);
+            chargeBtn.setVisibility(View.GONE);
 
+        }
+        //点击钓牌按钮
+        if (v.equals(chargeBtn)){
+            playMoveTv_1.setText("准备钓牌");
+            v.setVisibility(View.GONE);
+            transformBtn.setVisibility(View.GONE);
+        }
+
+        if (v.equals(transBtn_1)){
+            v.setVisibility(View.GONE);
+            transBtn_2.setVisibility(View.GONE);
+            //更新手牌
+            List<Card> playerHold = gamePlay.getMyHold();
+            Card card = new Card();
+            if (transPosition.length > 0){
+                card = new Card(playerHold.get(transPosition[0]).getValue() * 2); //新增一张高一级的牌
+                playerHold.add(card);
+                playerHold.remove(transPosition[0] + 1);    //移除两张手牌
+                playerHold.remove(transPosition[0]);
+            }
+            gamePlay.setMyHold(playerHold);
+            drawHolds(gamePlay.getAiHoldValue(), gamePlay.getMyHoldValue());
+            playMoveTv_1.setText("换到了一张 " + card.getValue());
+            //转换状态
+            nowCondition = AI_TURN;
+            gameCondition();
+        }
+        if (v.equals(transBtn_2)){
+            v.setVisibility(View.GONE);
+            transBtn_1.setVisibility(View.GONE);
+            //更新手牌
+            List<Card> playerHold = gamePlay.getMyHold();
+            Card card = new Card();
+            if (transPosition.length > 1){
+                card = new Card(playerHold.get(transPosition[1]).getValue() * 2); //新增一张高一级的牌
+                playerHold.add(card);
+                playerHold.remove(transPosition[1] + 1);    //移除两张手牌
+                playerHold.remove(transPosition[1]);
+            }
+            gamePlay.setMyHold(playerHold);
+            drawHolds(gamePlay.getAiHoldValue(), gamePlay.getMyHoldValue());
+            playMoveTv_1.setText("换到了一张 " + card.getValue());
+            //转换状态
+            nowCondition = AI_TURN;
+            gameCondition();
         }
     }
 }
