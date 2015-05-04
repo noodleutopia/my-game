@@ -21,6 +21,7 @@ public class GamePlay {
 
     private List<Card> myHold;
     private List<Card> aiHold;
+    private List<Card> bottom;
 
     private MyComparator comparator = new MyComparator();
 
@@ -95,6 +96,14 @@ public class GamePlay {
             result[i] = aiHold.get(i).getValue();
         }
         return result;
+    }
+
+    public List<Card> getBottom() {
+        return bottom;
+    }
+
+    public void setBottom(List<Card> bottom) {
+        this.bottom = bottom;
     }
 }
 
