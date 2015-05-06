@@ -1,6 +1,9 @@
 package pku.ss.zyf.mygame_2q48;
 
+import android.util.Log;
+
 import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -8,6 +11,7 @@ import java.util.List;
 
 import pku.ss.zyf.Utils.MyComparator;
 import pku.ss.zyf.bean.Card;
+import pku.ss.zyf.bean.Movement;
 
 /**
  * User: ZhangYafei(261957725@qq.com)
@@ -16,51 +20,17 @@ import pku.ss.zyf.bean.Card;
  */
 public class GamePlay {
 
-//    private Card[] myHold = new Card[5];
-//    private Card[] aiHold = new Card[5];
-
     private List<Card> myHold;
     private List<Card> aiHold;
     private List<Card> bottom;
+    private String aiMove;
+    private List<Movement> myMoveSeq = new ArrayList<>();   //行动序列记录
+    private List<Movement> aiMoveSeq = new ArrayList<>();
 
     private MyComparator comparator = new MyComparator();
 
-//    private int [] myHoldValue =new int[5];
-//    private int [] aiHoldValue =new int[5];
-
-    /**
-     *
-     * 换牌
-     *
-     * @param hold 手牌
-     * @param bottom 底牌
-     * @return 换牌结果
-     */
-    public Card[] transCard(Card[] hold, Card[] bottom){
-        Card[] result = new Card[4];
-        for (int i = 0; i < 4; i++){
-            result[i] = new Card();
-        }
-        return result;
-    }
-
-    /**
-     * 钓牌
-     * @param hold 自己手牌
-     * @param targetHold    目标手牌
-     * @param bottom    底牌
-     * @return 钓牌后双方手牌结果
-     */
-    public Card[] chargeCard(Card[] hold, Card[] targetHold, Card[] bottom){
-        Card[] result = new Card[8];
-        for (int i = 0; i < 8; i++){
-            result[i] = new Card();
-        }
-        return result;
-    }
-
     public List<Card> getMyHold() {
-        Collections.sort(myHold,comparator);
+        Collections.sort(myHold, comparator);
         return myHold;
     }
 
@@ -104,6 +74,46 @@ public class GamePlay {
 
     public void setBottom(List<Card> bottom) {
         this.bottom = bottom;
+    }
+
+    public String getAiMove() {
+        return aiMove;
+    }
+
+    public void setAiMove(String aiMove) {
+        this.aiMove = aiMove;
+    }
+
+    /**
+     * 行动记录
+     * @param player    玩家编号，AI为1，玩家为2
+     * @param movement  行动
+     */
+    public void recordMove(int player, Movement movement){
+
+        //AI行动
+        if (player == 1){
+            aiMoveSeq.add(movement);
+//            Log.d("TEST","AI move : " + movement.getMoveName());
+        }
+        //玩家行动
+        if (player == 2){
+            myMoveSeq.add(movement);
+        }
+    }
+
+    /**
+     * 得到AI行动序列
+     * @return  行动序列
+     */
+    public List<Integer> getAiMoveSeq(){
+        List<Integer> res = new ArrayList<>();
+        int i = 0;
+        while (i < aiMoveSeq.size()){
+            res.add(aiMoveSeq.get(i).getMoveName());
+            i++;
+        }
+        return res;
     }
 }
 

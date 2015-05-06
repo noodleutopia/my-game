@@ -11,13 +11,13 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import pku.ss.zyf.Utils.GameAI;
 import pku.ss.zyf.bean.Card;
+import pku.ss.zyf.bean.Movement;
 import pku.ss.zyf.bean.SetCards;
 
 
@@ -37,12 +37,9 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private List<Card> bottomCards;     //底牌
 
     private int nowCondition = GAME_OVER;
-    private static int stopFlag = 0;
-    public static void setStopFlag(){
-        stopFlag = 1;
-    }
     private int winner = 0;
-    private int flag = 0;
+    private int round = 0;   //局数
+    private int myWin = 0, aiWin = 0;   //比分
     private List<Integer> transPosition = new ArrayList<>();   //换牌手牌位置
     private List<Integer> chargePosition = new ArrayList<>();  //钓牌手牌位置
 
@@ -131,45 +128,9 @@ public class MainActivity extends Activity implements View.OnClickListener {
         List<Card> aiHold = new ArrayList<>();
         List<Card> playerHold = new ArrayList<>();
 
-//        for (int i = 0; i < 5; i++){
-//            playerHold[i] = new Card(0);
-//            aiHold[i] = new Card(0);
-//        }
         //首次分发手牌，每个人4张
                 playerHold.addAll(getBottomTop(4));
                 aiHold.addAll(getBottomTop(4));
-//        if (flag % 2 == 0){
-//            for (int i = 0; i < 4; i++){
-//                playerHold[i].setValue(bottomCards.remove(i).getValue());
-//            }
-//            for (int i = 0; i < 4; i++){
-//                bottomCards.remove(0);
-//                if (i == 0)
-//                    aiHold[i].setValue(2);
-//                if (i == 1)
-//                    aiHold[i].setValue(4);
-//                if (i == 2)
-//                    aiHold[i].setValue(8);
-//                if (i == 3)
-//                    aiHold[i].setValue(16);
-//            }
-//        }else{
-//            for (int i = 0; i < 4; i++){
-//                aiHold[i].setValue(bottomCards.remove(i).getValue());
-//            }
-//            for (int i = 0; i < 4; i++){
-//                bottomCards.remove(0);
-//                if (i == 0)
-//                    playerHold[i].setValue(2);
-//                if (i == 1)
-//                    playerHold[i].setValue(4);
-//                if (i == 2)
-//                    playerHold[i].setValue(8);
-//                if (i == 3)
-//                    playerHold[i].setValue(16);
-//            }
-//        }
-
 
         gamePlay.setAiHold(aiHold);
         gamePlay.setMyHold(playerHold);
@@ -215,7 +176,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
                 Message msg = Message.obtain();
                 msg.what = WAIT_AI;
-                mHandler.sendMessageDelayed(msg,3000);
+                mHandler.sendMessageDelayed(msg,1500);
             }
         }).start();
 //        gameCondition();
@@ -225,6 +186,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         while(nowCondition != GAME_OVER && nowCondition != GAME_WAIT && winner == 0){
             if (nowCondition == GAME_START){
                 gameConditionTv.setText("游戏开始！");
+                round++;
                 initCards();
                 initHold();
                 nowCondition = PLAYER_1_TURN;
@@ -237,29 +199,16 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 gameConditionTv.setText("AI回合");
                 aiTurn();
             }
-
-//            //显示手牌
-//            if (gamePlay.getMyHoldValue() != null && gamePlay.getAiHoldValue() != null){
-//                drawHolds();
-//            }
-            //判断胜利
-//            if (winner != 0){
-//                if (winner == 1){
-//                    gameConditionTv.setText("AI胜利！");
-//                }
-//                if (winner == 2){
-//                    gameConditionTv.setText("玩家胜利！");
-//                }
-//                nowCondition = GAME_OVER;
-//            }
         }
         //判断胜利
         if (winner != 0){
             if (winner == 1){
                 gameConditionTv.setText("AI胜利！");
+                aiWin ++;
             }
             if (winner == 2){
                 gameConditionTv.setText("玩家胜利！");
+                myWin ++;
             }
             nowCondition = GAME_OVER;
         }
@@ -268,7 +217,10 @@ public class MainActivity extends Activity implements View.OnClickListener {
             chargeBtn.setVisibility(View.GONE);
             startBtn.setVisibility(View.VISIBLE);
             startBtn.setText("再玩一局");
-            flag ++;
+            Log.d("TEST","局数： " + round + "\nAI ： PLAYER = " + aiWin +" : "+ myWin);
+            for (int i = 0; i < gamePlay.getAiMoveSeq().size(); i++){
+                Log.d("TEST","AI行动: " + gamePlay.getAiMoveSeq().get(i).toString());
+            }
         }
     }
 
@@ -372,7 +324,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
             if (i < 4){
                 //钓牌成功
                 Card card = aiHold.remove(i);   //AI移除被钓牌
-                aiHold.add(myHold.get(chargePosition.get(0)));  //AI拿一张钓牌
+//                aiHold.add(myHold.get(chargePosition.get(0)));  //AI拿一张钓牌
+                aiHold.add(new Card(2));
                 gamePlay.setAiHold(aiHold); //更新AI手牌
                 myHold.remove(chargePosition.get(0) + 2);    //移除三张手牌
                 myHold.remove(chargePosition.get(0) + 1);
@@ -381,8 +334,12 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 myHold.addAll(getBottomTop(2));  //抓2张底牌
                 gamePlay.setMyHold(myHold);     //更新手牌
                 drawHolds();    //绘制手牌
-                playMoveTv_1.setText("钓牌成功，钓到一张" + card.getValue()
-                    + ",抓两张牌");
+                if (card.getValue() > 8)
+                    playMoveTv_1.setText("钓牌成功,钓到一张Q,抓两张牌");
+                else
+                    playMoveTv_1.setText("钓牌成功,钓到一张" + card.getValue()
+                        + ",抓两张牌");
+                gamePlay.recordMove(2, new Movement(2, 1, card.getValue()));    //记录本次行动
                 nowCondition = AI_TURN;
                 gameCondition();
 
@@ -390,6 +347,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 //钓牌失败
                 Card card = aiHold.remove(0);   //AI移除最小的手牌
                 aiHold.add(myHold.get(chargePosition.get(0)));  //AI拿一张钓牌
+//                aiHold.add(new Card(2));
                 gamePlay.setAiHold(aiHold); //更新AI手牌
                 myHold.remove(chargePosition.get(0) + 2);    //移除三张手牌
                 myHold.remove(chargePosition.get(0) + 1);
@@ -398,8 +356,12 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 myHold.addAll(getBottomTop(2));  //抓2张底牌
                 gamePlay.setMyHold(myHold);     //更新手牌
                 drawHolds();    //绘制手牌
-                playMoveTv_1.setText("钓牌失败，钓到一张" + card.getValue()
-                        + ",抓两张牌");
+                if (card.getValue() > 8)
+                    playMoveTv_1.setText("钓牌失败,钓到一张Q,抓两张牌");
+                else
+                    playMoveTv_1.setText("钓牌失败,钓到一张" + card.getValue()
+                            + ",抓两张牌");
+                gamePlay.recordMove(2, new Movement(2, 0, card.getValue()));    //记录本次行动
                 nowCondition = AI_TURN;
                 gameCondition();
 
@@ -422,7 +384,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                     break;
                 case WAIT_AI:
                     nowCondition = PLAYER_1_TURN;
-                    aiMoveTv.setText("思考完毕");
+                    aiMoveTv.setText(gamePlay.getAiMove());
                     drawHolds();
                     gameCondition();
                 default:
@@ -441,8 +403,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
             startBtn.setVisibility(View.GONE);
             nowCondition = GAME_START;
             winner = 0;
-            Log.d("TEST",String.valueOf(flag));
-            if (flag > 0){
+            Log.d("TEST",String.valueOf(round));
+            if (round > 0){
 
             }
             Message msg = Message.obtain();
@@ -455,7 +417,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
             //抓一张牌
             List<Card> cards = getBottomTop(1);
             Card card = cards.get(0);
-//            Log.d("TEST","bottomTop is : " + card.getValue());
             gamePlay.setBottom(bottomCards);
             List<Card> myHold = gamePlay.getMyHold();
             myHold.add(card);
@@ -470,7 +431,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
         }
         //点击钓牌按钮
         if (v.equals(chargeBtn)){
-            playMoveTv_1.setText("准备钓牌");
             v.setVisibility(View.GONE);
             transformBtn.setVisibility(View.GONE);
 
@@ -494,7 +454,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 playerHold.remove(transPosition.get(0) + 1);    //移除两张手牌
                 playerHold.remove(transPosition.get(0).intValue());
                 playerHold.add(card);
-
             }
             gamePlay.setMyHold(playerHold);
             drawHolds();
@@ -502,6 +461,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 playMoveTv_1.setText("换到了一张Q");
             else
                 playMoveTv_1.setText("换到了一张 " + card.getValue());
+            gamePlay.recordMove(2, new Movement(1, card.getValue()));   //记录本次行动
             //转换状态
             nowCondition = AI_TURN;
             gameCondition();
@@ -524,12 +484,12 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
             }
             gamePlay.setMyHold(playerHold);
-
+            drawHolds();
             if (card.getValue() > 8)
                 playMoveTv_1.setText("换到了一张Q");
             else
                 playMoveTv_1.setText("换到了一张 " + card.getValue());
-            drawHolds();
+            gamePlay.recordMove(2, new Movement(1, card.getValue()));   //记录本次行动
             nowCondition = AI_TURN;
             gameCondition();
         }

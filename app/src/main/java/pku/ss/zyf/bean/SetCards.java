@@ -16,6 +16,8 @@ public class SetCards {
     private Card cards[] = new Card[44];
     private static SetCards cardsInstance = null;
     private int position[] = new int[44];
+    //底牌数量构成
+    private static final int CARD_2_COUNT = 36,CARD_4_COUNT = 6, CARD_8_COUNT = 2, CARD_Q_COUNT = 0;
 
     private SetCards() {
         setCard();
@@ -42,21 +44,22 @@ public class SetCards {
 
     /**
      *  给44张牌赋值，其中：
-     * 【2】有28张，【4】有10张，【8】有6张
+     * 【2】有36张，【4】有6张，【8】有2张
      * */
     private void setCard() {
 
-        for (int i = 0; i < 28; i++) {
+        int i = 0;
+        for ( i = 0; i < CARD_2_COUNT; i++) {
             cards[i] = new Card(2);
         }
-        for (int i = 28; i < 38; i++) {
+        for ( i = CARD_2_COUNT; i < CARD_2_COUNT + CARD_4_COUNT; i++) {
            cards[i] = new Card(4);
         }
-        for (int i = 38; i < 44; i++) {
+        for ( i = CARD_2_COUNT + CARD_4_COUNT; i < CARD_2_COUNT + CARD_4_COUNT + CARD_8_COUNT; i++) {
             cards[i] = new Card(8);
         }
 
-        for (int i = 0; i < 44; i++ ){
+        for ( i = 0; i < 44; i++ ){
            position[i] = i;
         }
 

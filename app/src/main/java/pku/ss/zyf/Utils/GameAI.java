@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import pku.ss.zyf.bean.Card;
+import pku.ss.zyf.bean.Movement;
 import pku.ss.zyf.mygame_2q48.GamePlay;
 import pku.ss.zyf.mygame_2q48.MainActivity;
 
@@ -20,20 +21,28 @@ public class GameAI{
     private List<Integer> transPosition = new ArrayList<>();   //换牌手牌位置
     private List<Integer> chargePosition = new ArrayList<>();  //钓牌手牌位置
     private List<Card> bottomCards = new ArrayList<>();
+    private String transValue, chargeValue;
 
     public void aiThink(GamePlay gamePlay){
         this.aiGamePlay = gamePlay;
         this.bottomCards = gamePlay.getBottom();
 
-        //抓一张牌
-        Card card = bottomCards.remove(0);
-        aiGamePlay.setBottom(bottomCards);
-//            Log.d("TEST","bottomTop is : " + card.getValue());
-        List<Card> aiHold = aiGamePlay.getAiHold();
-        aiHold.add(card);
-        //更新手牌
-        aiGamePlay.setAiHold(aiHold);
-        transformOrCharge(1);
+        //做决策
+        int move = ai_Decision();
+
+        //行动
+        transformOrCharge(move);
+
+        if (move == 1){
+            aiGamePlay.setAiMove("换牌，换到了一张" + transValue);
+            if (transValue.equals("Q"))
+                aiGamePlay.recordMove(1, new Movement(1,16));
+            else
+                aiGamePlay.recordMove(1, new Movement(1,Integer.valueOf(transValue)));
+        }
+        else{
+            aiGamePlay.setAiMove("钓牌");
+        }
     }
 
     /**
@@ -41,9 +50,18 @@ public class GameAI{
      * @param flag 标记
      */
     private void transformOrCharge(int flag){
-        int [] aiHoldValue = aiGamePlay.getAiHoldValue();
+        int [] aiHoldValue;
         //若换牌，手牌一定有5张
         if (flag == 1){
+            //抓一张牌
+            Card card = bottomCards.remove(0);
+            aiGamePlay.setBottom(bottomCards);
+//            Log.d("TEST","bottomTop is : " + card.getValue());
+            List<Card> aiHold = aiGamePlay.getAiHold();
+            aiHold.add(card);
+            //更新手牌
+            aiGamePlay.setAiHold(aiHold);
+            aiHoldValue = aiGamePlay.getAiHoldValue();
             List<String> btnTitle = new ArrayList<>();
             transPosition = new ArrayList<>();
             int i = 0;
@@ -73,24 +91,24 @@ public class GameAI{
             }//endWhile;
 
             //更新手牌
-            List<Card> aiHold = aiGamePlay.getAiHold();
-            Card card = new Card();
+            aiHold = aiGamePlay.getAiHold();
+            //若可以换牌
             if (transPosition.size() > 0){
+                Card tempCard;
                 if (aiHold.get(transPosition.get(0)).getValue() == 16)
-                    card = new Card(2); //新增一张高一级的牌
+                    tempCard = new Card(2); //新增一张高一级的牌
                 else
-                    card = new Card(aiHold.get(transPosition.get(0)).getValue() * 2); //新增一张高一级的牌
+                    tempCard = new Card(aiHold.get(transPosition.get(0)).getValue() * 2); //新增一张高一级的牌
                 aiHold.remove(transPosition.get(0) + 1);    //移除两张手牌
                 aiHold.remove(transPosition.get(0).intValue());
-                aiHold.add(card);
-
+                aiHold.add(tempCard);
+                if (tempCard.getValue() > 8)
+                    transValue = "Q";
+                else
+                    transValue = String.valueOf(tempCard.getValue());
         }
             aiGamePlay.setAiHold(aiHold);
-//            if (card.getValue() > 8)
-//                playMoveTv_1.setText("换到了一张Q");
-//            else
-//                playMoveTv_1.setText("换到了一张 " + card.getValue());
-            //转换状态
+
 
         }
 
@@ -143,6 +161,17 @@ public class GameAI{
 
         }
 
+    }
+
+    /**
+     * 作出本回合动作的决定
+     * @return 动作决定
+     */
+    public int ai_Decision(){
+        int decision = 0;
+
+        decision = 1;   //换牌
+        return decision;
     }
 
 }
