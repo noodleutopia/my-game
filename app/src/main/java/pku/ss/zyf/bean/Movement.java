@@ -1,6 +1,9 @@
 package pku.ss.zyf.bean;
 
+import java.util.Collections;
 import java.util.List;
+
+import pku.ss.zyf.Utils.MyComparator;
 
 /**
  * User: ZhangYafei(261957725@qq.com)
@@ -14,7 +17,7 @@ public class Movement {
     private int moveName;   //1为换牌，2为钓牌
     private int cardValue;  //得到的牌的值
     private int result;     //钓牌成功与否,0否1是
-    private List<Card> currentHold;
+    private List<Card> currentHold; //现在的手牌
 
 
     public Movement(int moveName, int cardValue, List<Card> currentHold) {
@@ -46,6 +49,16 @@ public class Movement {
     }
 
     public List<Card> getCurrentHold() {
+        Collections.sort(currentHold, new MyComparator());
         return currentHold;
+    }
+    public int[] getCurrentHoldValue(){
+        int[] result;
+        Collections.sort(currentHold, new MyComparator());
+        result = new int[currentHold.size()];
+        for (int i = 0; i < currentHold.size(); i++){
+            result[i] = currentHold.get(i).getValue();
+        }
+        return result;
     }
 }

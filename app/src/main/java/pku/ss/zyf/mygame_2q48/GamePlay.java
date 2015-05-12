@@ -1,5 +1,7 @@
 package pku.ss.zyf.mygame_2q48;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -29,8 +31,10 @@ public class GamePlay {
     private MyComparator comparator = new MyComparator();
 
     public List<Card> getMyHold() {
-        Collections.sort(myHold, comparator);
-        return myHold;
+        List<Card> tempHold = new ArrayList<>();
+        Collections.sort(myHold,comparator);
+        tempHold.addAll(myHold);
+        return tempHold;
     }
 
     public void setMyHold(List<Card> myHold) {
@@ -38,8 +42,10 @@ public class GamePlay {
     }
 
     public List<Card> getAiHold() {
+        List<Card> tempHold = new ArrayList<>();
         Collections.sort(aiHold,comparator);
-        return aiHold;
+        tempHold.addAll(aiHold);
+        return tempHold;
     }
 
     public void setAiHold(List<Card> aiHold) {
@@ -93,7 +99,11 @@ public class GamePlay {
         //AI行动
         if (player == 1){
             aiMoveSeq.add(movement);
-//            Log.d("TEST","AI move : " + movement.getMoveName());
+            StringBuilder temp = new StringBuilder();
+            for (int value : movement.getCurrentHoldValue()){
+                temp.append(value);
+            }
+            Log.d("TEST", "AI move : " + temp.toString());
         }
         //玩家行动
         if (player == 2){
@@ -105,21 +115,54 @@ public class GamePlay {
      * 得到AI行动序列
      * @return  行动序列
      */
-    public List<Integer> getAiMoveSeq(){
-        List<Integer> res = new ArrayList<>();
+    public List<String> getAiMoveSeq(){
+        List<String> resStr = new ArrayList<>();
         int i = 0;
-        while (i < aiMoveSeq.size()){
-            res.add(aiMoveSeq.get(i).getMoveName());
+        while(i < aiMoveSeq.size()){
+            Movement tempMove = aiMoveSeq.get(i);
+            if (tempMove.getMoveName() == 1){
+                StringBuilder temp = new StringBuilder("换牌，"+ "换到一张" + tempMove.getCardValue() + "，现在手牌是：");
+                for (int value : tempMove.getCurrentHoldValue()){
+                    temp.append(value);
+                }
+                resStr.add(temp.toString());
+            }
+            else {
+                StringBuilder temp = new StringBuilder("钓牌，"+"换到一张"+aiMoveSeq.get(i).getCardValue() +"，现在手牌是：");
+                for (int value : aiMoveSeq.get(i).getCurrentHoldValue()){
+                    temp.append(value);
+                }
+                resStr.add(temp.toString());
+            }
             i++;
+        }
+        return resStr;
+    }
+
+    /**
+     * 记录本局手牌序列
+     */
+    public void recordHoldSeq(){
+        List<Card> temp1 = new ArrayList<>();
+        List<Card> temp2 = new ArrayList<>();
+        temp1.addAll(aiHold);
+        temp2.addAll(myHold);
+        aiHoldSeq.add(temp1);
+        myHoldSeq.add(temp2);
+    }
+
+    public List<List<Card>> getHoldSeq(int player){
+        List<List<Card>> res = new ArrayList<>();
+        if (player == 1){
+            res.addAll(aiHoldSeq);
+        }
+        else{
+            res.addAll(myHoldSeq);
         }
         return res;
     }
 
-    public void recordAiHold(){
-        aiHoldSeq.add(this.aiHold);
-    }
-    public void recordMyHold(){
-        myHoldSeq.add(this.myHold);
-    }
+
+
 }
 

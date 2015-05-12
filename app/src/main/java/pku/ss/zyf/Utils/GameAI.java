@@ -1,5 +1,6 @@
 package pku.ss.zyf.Utils;
 
+import android.util.Log;
 import android.view.View;
 
 import java.util.ArrayList;
@@ -23,7 +24,7 @@ public class GameAI{
     private List<Card> bottomCards = new ArrayList<>();
     private String transValue, chargeValue;
 
-    public void aiThink(GamePlay gamePlay){
+    public int aiThink(GamePlay gamePlay){
         this.aiGamePlay = gamePlay;
         this.bottomCards = gamePlay.getBottom();
 
@@ -34,15 +35,27 @@ public class GameAI{
         transformOrCharge(move);
 
         if (move == 1){
+            List<Card> temp = new ArrayList<>();
             aiGamePlay.setAiMove("换牌，换到了一张" + transValue);
-            if (transValue.equals("Q"))
-                aiGamePlay.recordMove(1, new Movement(1,16, aiGamePlay.getAiHold()));
-            else
-                aiGamePlay.recordMove(1, new Movement(1,Integer.valueOf(transValue), aiGamePlay.getAiHold()));
+            if (transValue.equals("Q")){
+                temp = aiGamePlay.getAiHold();
+                Movement movement = new Movement(1, 16, temp);
+                aiGamePlay.recordMove(1, movement);
+                Log.d("TEST","注意：" + aiGamePlay.getAiHoldValue()[3]);
+            }
+            else{
+                temp = aiGamePlay.getAiHold();
+                Movement movement = new Movement(1, Integer.valueOf(transValue), temp);
+                aiGamePlay.recordMove(1, movement);
+                Log.d("TEST", "注意：" + aiGamePlay.getAiHoldValue()[3]);
+            }
+            aiGamePlay.recordHoldSeq(); //记录手牌
         }
         else{
             aiGamePlay.setAiMove("钓牌");
         }
+
+        return 1;
     }
 
     /**
