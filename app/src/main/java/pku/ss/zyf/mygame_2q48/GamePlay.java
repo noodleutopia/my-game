@@ -1,11 +1,6 @@
 package pku.ss.zyf.mygame_2q48;
 
-import android.util.Log;
-
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -26,6 +21,10 @@ public class GamePlay {
     private String aiMove;
     private List<Movement> myMoveSeq = new ArrayList<>();   //行动序列记录
     private List<Movement> aiMoveSeq = new ArrayList<>();
+    private List<List<Card>> myHoldSeq = new ArrayList<>(); //手牌变化记录
+    private List<List<Card>> aiHoldSeq = new ArrayList<>();
+
+
 
     private MyComparator comparator = new MyComparator();
 
@@ -114,6 +113,13 @@ public class GamePlay {
             i++;
         }
         return res;
+    }
+
+    public void recordAiHold(){
+        aiHoldSeq.add(this.aiHold);
+    }
+    public void recordMyHold(){
+        myHoldSeq.add(this.myHold);
     }
 }
 
