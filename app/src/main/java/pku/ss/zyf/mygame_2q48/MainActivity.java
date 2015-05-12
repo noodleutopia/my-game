@@ -23,7 +23,7 @@ import pku.ss.zyf.bean.SetCards;
 
 public class MainActivity extends Activity implements View.OnClickListener {
 
-    private TextView gameConditionTv, aiHoldTv, playerHoldTv_1, bottomCardsTv, aiMoveTv, playMoveTv_1 ;
+    private TextView gameConditionTv, aiHoldTv, playerHoldTv_1, bottomCardsTv, aiMoveTv, playMoveTv_1, scoreBoardTv;
     private Button startBtn, transformBtn, chargeBtn, transBtn_1, transBtn_2, transBtn_3;
     public static final int GAME_START = 0;
     public static final int PLAYER_1_TURN = 1;
@@ -69,6 +69,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         playerHoldTv_1 = (TextView) findViewById(R.id.player_1_hold_cards);
         aiMoveTv = (TextView) findViewById(R.id.ai_move);
         playMoveTv_1 = (TextView) findViewById(R.id.player_1_move);
+        scoreBoardTv = (TextView) findViewById(R.id.score_board);
 
         startBtn = (Button) findViewById(R.id.start_btn);
         startBtn.setOnClickListener(this);
@@ -129,8 +130,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
         List<Card> playerHold = new ArrayList<>();
 
         //首次分发手牌，每个人4张
-                playerHold.addAll(getBottomTop(4));
-                aiHold.addAll(getBottomTop(4));
+        playerHold.addAll(getBottomTop(4));
+        aiHold.addAll(getBottomTop(4));
 
         gamePlay.setAiHold(aiHold);
         gamePlay.setMyHold(playerHold);
@@ -218,6 +219,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
             startBtn.setVisibility(View.VISIBLE);
             startBtn.setText("再玩一局");
             Log.d("TEST","局数： " + round + "\nAI ： PLAYER = " + aiWin +" : "+ myWin);
+            scoreBoardTv.setText("比分 Player : AI = " + myWin +" : "+ aiWin);    //更改计分板
+            scoreBoardTv.setVisibility(View.VISIBLE);
             for (int i = 0; i < gamePlay.getAiMoveSeq().size(); i++){
                 Log.d("TEST","AI行动: " + gamePlay.getAiMoveSeq().get(i).toString());
             }
@@ -339,7 +342,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 else
                     playMoveTv_1.setText("钓牌成功,钓到一张" + card.getValue()
                         + ",抓两张牌");
-                gamePlay.recordMove(2, new Movement(2, 1, card.getValue()));    //记录本次行动
+                gamePlay.recordMove(2, new Movement(2, 1, card.getValue(), gamePlay.getMyHold()));    //记录本次行动
                 nowCondition = AI_TURN;
                 gameCondition();
 
@@ -361,7 +364,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 else
                     playMoveTv_1.setText("钓牌失败,钓到一张" + card.getValue()
                             + ",抓两张牌");
-                gamePlay.recordMove(2, new Movement(2, 0, card.getValue()));    //记录本次行动
+                gamePlay.recordMove(2, new Movement(2, 0, card.getValue(), gamePlay.getMyHold()));    //记录本次行动
                 nowCondition = AI_TURN;
                 gameCondition();
 
@@ -461,7 +464,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 playMoveTv_1.setText("换到了一张Q");
             else
                 playMoveTv_1.setText("换到了一张 " + card.getValue());
-            gamePlay.recordMove(2, new Movement(1, card.getValue()));   //记录本次行动
+            gamePlay.recordMove(2, new Movement(1, card.getValue(), gamePlay.getMyHold()));   //记录本次行动
             //转换状态
             nowCondition = AI_TURN;
             gameCondition();
@@ -489,7 +492,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 playMoveTv_1.setText("换到了一张Q");
             else
                 playMoveTv_1.setText("换到了一张 " + card.getValue());
-            gamePlay.recordMove(2, new Movement(1, card.getValue()));   //记录本次行动
+            gamePlay.recordMove(2, new Movement(1, card.getValue(), gamePlay.getMyHold()));   //记录本次行动
             nowCondition = AI_TURN;
             gameCondition();
         }

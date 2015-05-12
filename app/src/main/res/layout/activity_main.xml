@@ -169,7 +169,19 @@
             android:layout_below="@id/start_btn"
             android:layout_alignParentRight="true"
             />
-    </RelativeLayout>
+        <TextView
+            android:id="@+id/score_board"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:text="比分 Player : AI = 0 : 0"
+            android:textSize="15sp"
+            android:textColor="#aa534654"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            />
+        </RelativeLayout>
     </RelativeLayout>
 
 

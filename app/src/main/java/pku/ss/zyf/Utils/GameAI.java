@@ -36,9 +36,9 @@ public class GameAI{
         if (move == 1){
             aiGamePlay.setAiMove("换牌，换到了一张" + transValue);
             if (transValue.equals("Q"))
-                aiGamePlay.recordMove(1, new Movement(1,16));
+                aiGamePlay.recordMove(1, new Movement(1,16, aiGamePlay.getAiHold()));
             else
-                aiGamePlay.recordMove(1, new Movement(1,Integer.valueOf(transValue)));
+                aiGamePlay.recordMove(1, new Movement(1,Integer.valueOf(transValue), aiGamePlay.getAiHold()));
         }
         else{
             aiGamePlay.setAiMove("钓牌");
@@ -108,8 +108,6 @@ public class GameAI{
                     transValue = String.valueOf(tempCard.getValue());
         }
             aiGamePlay.setAiHold(aiHold);
-
-
         }
 
         //若钓牌
