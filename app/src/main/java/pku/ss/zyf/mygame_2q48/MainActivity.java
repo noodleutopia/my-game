@@ -12,6 +12,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,13 +37,14 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private static final int STOP_GAME = 2;
     private List<Card> bottomCards;     //底牌
 
-    private int nowCondition = GAME_OVER;
+    private static int nowCondition = GAME_OVER;
     private int winner = 0;
     private int round = 0;   //局数
     private int myWin = 0, aiWin = 0;   //比分
     private List<Integer> transPosition = new ArrayList<>();   //换牌手牌位置
     private List<Integer> chargePosition = new ArrayList<>();  //钓牌手牌位置
 
+    private MyHandler mHandler = new MyHandler(this);
     private GamePlay gamePlay = new GamePlay();
     public GamePlay getGamePlay(){
         return this.gamePlay;
@@ -90,7 +92,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
      * 洗底牌
      */
     private void initCards(){
-        bottomCards  = new ArrayList<Card>();
+        bottomCards  = new ArrayList<>();
         Log.d("TEST", "initCards is called !");
         SetCards setCards = SetCards.getInstance();
         //初始化底牌
@@ -174,10 +176,9 @@ public class MainActivity extends Activity implements View.OnClickListener {
             public void run() {
                 if(bottomCards.size() > 0)
                     new GameAI().aiThink(gamePlay);
-
                 Message msg = Message.obtain();
                 msg.what = WAIT_AI;
-                mHandler.sendMessageDelayed(msg,1500);
+                mHandler.sendMessageDelayed(msg, 1500);
             }
         }).start();
 //        gameCondition();
@@ -218,9 +219,10 @@ public class MainActivity extends Activity implements View.OnClickListener {
             chargeBtn.setVisibility(View.GONE);
             startBtn.setVisibility(View.VISIBLE);
             startBtn.setText("再玩一局");
-            Log.d("TEST","局数： " + round + "\nAI ： PLAYER = " + aiWin +" : "+ myWin);
-            scoreBoardTv.setText("比分 Player : AI = " + myWin +" : "+ aiWin);    //更改计分板
+            Log.d("TEST", "局数： " + round + "\nAI ： PLAYER = " + aiWin + " : " + myWin);
+            scoreBoardTv.setText("比分 Player : AI = " + myWin + " : " + aiWin);    //更改计分板
             scoreBoardTv.setVisibility(View.VISIBLE);
+            bottomCardsTv.setVisibility(View.GONE);
             for (int i = 0; i < gamePlay.getAiMoveSeq().size(); i++){
                 Log.d("TEST","AI行动: " + gamePlay.getAiMoveSeq().get(i).toString());
             }
@@ -378,25 +380,28 @@ public class MainActivity extends Activity implements View.OnClickListener {
     /**
      * 主线程消息处理机
      */
-    private Handler mHandler = new Handler() {
-
+    private static class MyHandler extends Handler{
+        private final WeakReference<MainActivity> mActivity;
+        private MyHandler(MainActivity activity) {
+            this.mActivity = new WeakReference<MainActivity>(activity);
+        }
+        @Override
         public void handleMessage(Message msg) {
+            MainActivity activity = mActivity.get();
             switch (msg.what) {
                 case START_GAME:
-                    gameCondition();
+                    activity.gameCondition();
                     break;
                 case WAIT_AI:
                     nowCondition = PLAYER_1_TURN;
-                    aiMoveTv.setText(gamePlay.getAiMove());
-                    drawHolds();
-                    gameCondition();
+                    activity.aiMoveTv.setText(activity.gamePlay.getAiMove());
+                    activity.drawHolds();
+                    activity.gameCondition();
+                    break;
                 default:
                     break;
             }
         }
-    };
-    private void gamePlay(){
-
     }
 
     @Override
@@ -408,7 +413,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
             winner = 0;
             Log.d("TEST",String.valueOf(round));
             if (round > 0){
-
             }
             Message msg = Message.obtain();
             msg.what = START_GAME;
