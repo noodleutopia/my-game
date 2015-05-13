@@ -225,7 +225,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 Log.d("TEST","AI行动: " + gamePlay.getAiMoveSeq().get(i).toString());
             }
         }
-
     }
 
     /**
