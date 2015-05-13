@@ -159,7 +159,6 @@ public class GamePlay {
         else{
             res.addAll(myHoldSeq);
         }
-
         return res;
     }
 
