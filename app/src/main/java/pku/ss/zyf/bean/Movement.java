@@ -20,11 +20,26 @@ public class Movement {
     private List<Card> currentHold; //现在的手牌
 
 
+    /**
+     *  换牌的构造函数
+     * @param moveName 1为换牌，2为钓牌
+     * @param cardValue 得到的牌的值
+     * @param currentHold 现在的手牌
+     */
     public Movement(int moveName, int cardValue, List<Card> currentHold) {
         this.moveName = moveName;
         this.cardValue = cardValue;
         this.currentHold = currentHold;
     }
+
+    /**
+     * 钓牌的构造函数
+     * @param moveName 1为换牌，2为钓牌
+     * @param cardValue 得到的牌的值
+     * @param currentHold 现在的手牌
+     * @param result 钓牌成功与否,0否1是
+     *
+     */
     public Movement(int moveName, int result, int cardValue, List<Card> currentHold) {
         this.moveName = moveName;
         this.cardValue = cardValue;

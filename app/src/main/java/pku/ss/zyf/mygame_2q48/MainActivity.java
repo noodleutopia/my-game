@@ -47,6 +47,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
     public GamePlay getGamePlay(){
         return this.gamePlay;
     }
+    private static Activity myActivity;
+    private boolean aiHoldVisible = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,12 +58,15 @@ public class MainActivity extends Activity implements View.OnClickListener {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-
         setContentView(R.layout.activity_main);
+        myActivity = this;
         initView();
 
     }
 
+    public static Activity getMyActivity(){
+        return myActivity;
+    }
     private void initView(){
         gameConditionTv = (TextView) findViewById(R.id.game_condition);
         bottomCardsTv = (TextView) findViewById(R.id.bottom_cards);
@@ -70,6 +75,9 @@ public class MainActivity extends Activity implements View.OnClickListener {
         aiMoveTv = (TextView) findViewById(R.id.ai_move);
         playMoveTv_1 = (TextView) findViewById(R.id.player_1_move);
         scoreBoardTv = (TextView) findViewById(R.id.score_board);
+        if (!aiHoldVisible){
+            aiHoldTv.setVisibility(View.INVISIBLE);
+        }
 
         startBtn = (Button) findViewById(R.id.start_btn);
         startBtn.setOnClickListener(this);
@@ -108,7 +116,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
      */
     public List<Card> getBottomTop(int number){
         //若底牌不足一张，则洗牌
-        if (bottomCards.size() < 1){
+        if (bottomCards.size() < 2){
             initCards();
         }
         List<Card> cards = new ArrayList<>();
@@ -169,11 +177,13 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private void aiTurn(){
         nowCondition = GAME_WAIT;
         aiMoveTv.setText("AI思考中……");
+        if (bottomCards.size() < 2){
+            initCards();
+        }
         new Thread(new Runnable() {
             @Override
             public void run() {
-                if(bottomCards.size() > 0)
-                    new GameAI().aiThink(gamePlay);
+                new GameAI().aiThink(gamePlay);
 
                 Message msg = Message.obtain();
                 msg.what = WAIT_AI;

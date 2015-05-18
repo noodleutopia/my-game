@@ -23,6 +23,8 @@ public class GameAI{
     private List<Integer> chargePosition = new ArrayList<>();  //钓牌手牌位置
     private List<Card> bottomCards = new ArrayList<>();
     private String transValue, chargeValue;
+    private boolean chargeGood;
+    private MainActivity mainActivity = (MainActivity) MainActivity.getMyActivity();
 
     public int aiThink(GamePlay gamePlay){
         this.aiGamePlay = gamePlay;
@@ -35,26 +37,50 @@ public class GameAI{
         transformOrCharge(move);
 
         if (move == 1){
+            //若完成了换牌
             List<Card> temp = new ArrayList<>();
             aiGamePlay.setAiMove("换牌，换到了一张" + transValue);
             if (transValue.equals("Q")){
                 temp = aiGamePlay.getAiHold();
                 Movement movement = new Movement(1, 16, temp);
                 aiGamePlay.recordMove(1, movement);
-                Log.d("TEST","注意：" + aiGamePlay.getAiHoldValue()[3]);
             }
             else{
                 temp = aiGamePlay.getAiHold();
                 Movement movement = new Movement(1, Integer.valueOf(transValue), temp);
                 aiGamePlay.recordMove(1, movement);
-                Log.d("TEST", "注意：" + aiGamePlay.getAiHoldValue()[3]);
             }
             aiGamePlay.recordHoldSeq(); //记录手牌
         }
         else{
-            aiGamePlay.setAiMove("钓牌");
+            //若完成了钓牌
+            if (chargeGood){
+                //钓牌成功
+                aiGamePlay.setAiMove("钓牌成功，钓到一张" + chargeValue + ",抓两张牌");
+                List<Card> temp  = aiGamePlay.getAiHold();
+                if (chargeValue.equals("Q")) {
+                    Movement movement = new Movement(2, 1, 16, temp);
+                    aiGamePlay.recordMove(1, movement);
+                }
+                else {
+                    Movement movement = new Movement(2, 1, Integer.valueOf(chargeValue), temp);
+                    aiGamePlay.recordMove(1, movement);
+                }
+            }else {
+                //钓牌失败
+                aiGamePlay.setAiMove("钓牌失败，钓到一张" + chargeValue + ",抓两张牌");
+                List<Card> temp  = aiGamePlay.getAiHold();
+                if (chargeValue.equals("Q")) {
+                    Movement movement = new Movement(2, 0, 16, temp);
+                    aiGamePlay.recordMove(1, movement);
+                }
+                else {
+                    Movement movement = new Movement(2, 0, Integer.valueOf(chargeValue), temp);
+                    aiGamePlay.recordMove(1, movement);
+                }
+            }
+            aiGamePlay.recordHoldSeq(); //记录手牌
         }
-
         return 1;
     }
 
@@ -128,50 +154,46 @@ public class GameAI{
             List<Card> aiHold = aiGamePlay.getAiHold();
             List<Card> myHold = aiGamePlay.getMyHold();
             int i = 0;
-            while (aiHold.get(i).getValue() != myHold.get(1).getValue() * 2){
+            while (myHold.get(i).getValue() != aiHold.get(1).getValue() * 2){
                 i++;
                 if (i == 4)
                     break;
             }
             if (i < 4){
                 //钓牌成功
-//                Card card = aiHold.remove(i);   //AI移除被钓牌
-//                aiHold.add(myHold.get(chargePosition.get(0)));  //AI拿一张钓牌
-//                aiGamePlay.setAiHold(aiHold); //更新AI手牌
-//                myHold.remove(chargePosition.get(0) + 2);    //移除三张手牌
-//                myHold.remove(chargePosition.get(0) + 1);
-//                myHold.remove(chargePosition.get(0).intValue());
-//                myHold.add(card);   //钓到的牌加入手牌
-//                myHold.addAll(new MainActivity().getBottomTop(2));  //抓2张底牌
-//                aiGamePlay.setMyHold(myHold);     //更新手牌
-//                drawHolds();    //绘制手牌
-//                playMoveTv_1.setText("钓牌成功，钓到一张" + card.getValue()
-//                        + ",抓两张牌");
-//                nowCondition = AI_TURN;
-//                gameCondition();
-
+                chargeGood = true;
+                Card card = myHold.remove(i);   //Player移除被钓牌
+                myHold.add(new Card(2));        //Player拿一张2
+                aiGamePlay.setMyHold(myHold);         //更新Player手牌
+                aiHold.remove(chargePosition.get(0) + 2);    //移除三张手牌
+                aiHold.remove(chargePosition.get(0) + 1);
+                aiHold.remove(chargePosition.get(0).intValue());
+                aiHold.add(card);   //钓到的牌加入手牌
+                aiHold.addAll(mainActivity.getBottomTop(2));  //抓2张底牌
+                aiGamePlay.setAiHold(aiHold);     //更新手牌
+                if (card.getValue() > 8)
+                    chargeValue = "Q";
+                else
+                    chargeValue = String.valueOf(card.getValue());
             }else{
                 //钓牌失败
-//                Card card = aiHold.remove(0);   //AI移除最小的手牌
-//                aiHold.add(myHold.get(chargePosition.get(0)));  //AI拿一张钓牌
-//                aiGamePlay.setAiHold(aiHold); //更新AI手牌
-//                myHold.remove(chargePosition.get(0) + 2);    //移除三张手牌
-//                myHold.remove(chargePosition.get(0) + 1);
-//                myHold.remove(chargePosition.get(0).intValue());
-//                myHold.add(card);   //钓到的牌加入手牌
-//                myHold.addAll(getBottomTop(2));  //抓2张底牌
-//                aiGamePlay.setMyHold(myHold);     //更新手牌
-//                drawHolds();    //绘制手牌
-//                playMoveTv_1.setText("钓牌失败，钓到一张" + card.getValue()
-//                        + ",抓两张牌");
-//                nowCondition = AI_TURN;
-//                gameCondition();
-
-
+                chargeGood = false;
+                Card card = myHold.remove(0);   //Player移除最小的手牌
+                myHold.add(aiHold.get(chargePosition.get(0)));  //Player拿一张钓牌
+                aiGamePlay.setAiHold(myHold);   //更新Player手牌
+                aiHold.remove(chargePosition.get(0) + 2);    //移除三张手牌
+                aiHold.remove(chargePosition.get(0) + 1);
+                aiHold.remove(chargePosition.get(0).intValue());
+                aiHold.add(card);   //钓到的牌加入手牌
+                aiHold.addAll(mainActivity.getBottomTop(2));  //抓2张底牌
+                aiGamePlay.setMyHold(myHold);     //更新手牌
+                aiGamePlay.setAiHold(aiHold);     //更新手牌
+                if (card.getValue() > 8)
+                    chargeValue = "Q";
+                else
+                    chargeValue = String.valueOf(card.getValue());
             }
-
         }
-
     }
 
     /**
@@ -181,7 +203,23 @@ public class GameAI{
     public int ai_Decision(){
         int decision = 0;
 
-        decision = 1;   //换牌
+        //判断是否有可能钓牌
+        int [] aiHoldValue = aiGamePlay.getAiHoldValue();
+        if (aiHoldValue[0] == aiHoldValue[1] && aiHoldValue[2] == aiHoldValue[1] ||
+                aiHoldValue[2] == aiHoldValue[3] && aiHoldValue[2] == aiHoldValue[1]){
+            if (aiHoldValue[0] == aiHoldValue[1]){
+                chargePosition.add(0);
+            }else{
+                chargePosition.add(1);
+            }
+        }
+        if (chargePosition.size() > 0){
+            //可以钓牌
+            decision = 2;
+        }else{
+            decision = 1;   //换牌
+        }
+
         return decision;
     }
 

@@ -87,6 +87,7 @@ public class GamePlay {
 
     public void setAiMove(String aiMove) {
         this.aiMove = aiMove;
+        Log.d("TEST","AI本轮行动：" + aiMove);
     }
 
     /**
@@ -99,11 +100,6 @@ public class GamePlay {
         //AI行动
         if (player == 1){
             aiMoveSeq.add(movement);
-            StringBuilder temp = new StringBuilder();
-            for (int value : movement.getCurrentHoldValue()){
-                temp.append(value);
-            }
-            Log.d("TEST", "AI move : " + temp.toString());
         }
         //玩家行动
         if (player == 2){
@@ -128,7 +124,7 @@ public class GamePlay {
                 resStr.add(temp.toString());
             }
             else {
-                StringBuilder temp = new StringBuilder("钓牌，"+"换到一张"+aiMoveSeq.get(i).getCardValue() +"，现在手牌是：");
+                StringBuilder temp = new StringBuilder("钓牌，"+"钓到一张"+tempMove.getCardValue() +"，现在手牌是：");
                 for (int value : aiMoveSeq.get(i).getCurrentHoldValue()){
                     temp.append(value);
                 }
@@ -148,7 +144,17 @@ public class GamePlay {
         temp1.addAll(aiHold);
         temp2.addAll(myHold);
         aiHoldSeq.add(temp1);
+        StringBuilder sb = new StringBuilder();
+        for (Card card : temp1){
+            sb.append(card.getValue());
+        }
+        Log.d("TEST","AI手牌记录：" + sb.toString());
         myHoldSeq.add(temp2);
+        sb = new StringBuilder();
+        for (Card card : temp2){
+            sb.append(card.getValue());
+        }
+        Log.d("TEST","PLAYER手牌记录：" + sb.toString());
     }
 
     public List<List<Card>> getHoldSeq(int player){
