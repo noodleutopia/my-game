@@ -82,7 +82,8 @@ public class GamePlay {
     }
 
     public String getAiMove() {
-        return aiMove;
+        String temp = aiMove.substring(0,aiMove.indexOf(":"));
+        return temp;
     }
 
     public void setAiMove(String aiMove) {
