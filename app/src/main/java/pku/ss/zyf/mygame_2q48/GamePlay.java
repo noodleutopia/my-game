@@ -21,10 +21,11 @@ public class GamePlay {
     private List<Card> aiHold;
     private List<Card> bottom;
     private String aiMove;
+    private String myMove;
     private List<Movement> myMoveSeq = new ArrayList<>();   //行动序列记录
     private List<Movement> aiMoveSeq = new ArrayList<>();
-    private List<List<Card>> myHoldSeq = new ArrayList<>(); //手牌变化记录
-    private List<List<Card>> aiHoldSeq = new ArrayList<>();
+    private List<int []> myHoldSeq = new ArrayList<>(); //手牌变化记录
+    private List<int []> aiHoldSeq = new ArrayList<>();
 
 
 
@@ -85,10 +86,18 @@ public class GamePlay {
         String temp = aiMove.substring(0,aiMove.indexOf(":"));
         return temp;
     }
+    public String getMyMove() {
+        String temp = myMove.substring(0,myMove.indexOf(":"));
+        return temp;
+    }
 
     public void setAiMove(String aiMove) {
         this.aiMove = aiMove;
         Log.d("TEST","AI本轮行动：" + aiMove);
+    }
+    public void setMyMove(String myMove) {
+        this.myMove = myMove;
+        Log.d("TEST","PLAYER本轮行动：" + myMove);
     }
 
     /**
@@ -137,29 +146,46 @@ public class GamePlay {
     }
 
     /**
+     * 获得最后一次行动
+     * @param player 玩家编号，0为AI，1为PLAYER
+     * @return 最后一次行动
+     */
+    public Movement getLastMove(int player){
+        Movement lastMove = new Movement();
+        if (player == 0){
+            if (aiMoveSeq.size() > 0)
+                lastMove = aiMoveSeq.get(aiMoveSeq.size() - 1);
+        }
+        if (player == 1)
+        {
+            if (myMoveSeq.size() > 0)
+                lastMove = myMoveSeq.get(myMoveSeq.size() - 1);
+        }
+        return lastMove;
+    }
+
+    /**
      * 记录本局手牌序列
      */
     public void recordHoldSeq(){
-        List<Card> temp1 = new ArrayList<>();
-        List<Card> temp2 = new ArrayList<>();
-        temp1.addAll(aiHold);
-        temp2.addAll(myHold);
+        int [] temp1= this.getAiHoldValue();
+        int [] temp2 = this.getMyHoldValue();
         aiHoldSeq.add(temp1);
         StringBuilder sb = new StringBuilder();
-        for (Card card : temp1){
-            sb.append(card.getValue());
+        for (int cardValue : temp1){
+            sb.append(cardValue);
         }
         Log.d("TEST","AI手牌记录：" + sb.toString());
         myHoldSeq.add(temp2);
         sb = new StringBuilder();
-        for (Card card : temp2){
-            sb.append(card.getValue());
+        for (int cardValue : temp2){
+            sb.append(cardValue);
         }
         Log.d("TEST","PLAYER手牌记录：" + sb.toString());
     }
 
-    public List<List<Card>> getHoldSeq(int player){
-        List<List<Card>> res = new ArrayList<>();
+    public List<int[]> getHoldSeq(int player){
+        List<int[]> res = new ArrayList<>();
         if (player == 1){
             res.addAll(aiHoldSeq);
         }

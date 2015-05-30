@@ -22,6 +22,7 @@ public class GameAI{
     private List<Integer> transPosition = new ArrayList<>();   //换牌手牌位置
     private List<Integer> chargePosition = new ArrayList<>();  //钓牌手牌位置
     private List<Card> bottomCards = new ArrayList<>();
+    int [] aiHoldValue;
     private String transValue, chargeValue;
     private boolean chargeGood;
     private MainActivity mainActivity = (MainActivity) MainActivity.getMyActivity();
@@ -39,7 +40,6 @@ public class GameAI{
 
         if (move == 1){
             //若完成了换牌
-            List<Card> temp = new ArrayList<>();
             aiGamePlay.setAiMove("换牌，换到了一张" + transValue + ": ,摸了一张" +movement.getDrawCardValues().get(0));
             aiGamePlay.recordMove(1, movement);
             aiGamePlay.recordHoldSeq(); //记录手牌
@@ -195,10 +195,11 @@ public class GameAI{
      * @return 动作决定
      */
     public int ai_Decision(){
-        int decision = 0;
+        int finalDecision = 0;
+
+        aiHoldValue = aiGamePlay.getAiHoldValue();
 
         //判断是否有可能钓牌
-        int [] aiHoldValue = aiGamePlay.getAiHoldValue();
         if (aiHoldValue[0] == aiHoldValue[1] && aiHoldValue[2] == aiHoldValue[1] ||
                 aiHoldValue[2] == aiHoldValue[3] && aiHoldValue[2] == aiHoldValue[1]){
             if (aiHoldValue[0] == aiHoldValue[1]){
@@ -208,12 +209,40 @@ public class GameAI{
             }
         }
         if (chargePosition.size() > 0){
-            //可以钓牌
-            decision = 2;
+            //可以钓牌，执行决策函数
+            finalDecision = dicisionMaker(2);
         }else{
-            decision = 1;   //换牌
+            finalDecision = 1;   //换牌
         }
 
+        return finalDecision;
+    }
+
+    /**
+     * 策略制定机，可以选择使用哪一种AI
+     * @param num 采用的AI编号
+     * @return 本次行动编号，1为换牌，2为钓牌
+     */
+    private int dicisionMaker(int num){
+        int decision = 1;
+
+        if (num == 0){
+            //策略0：只会换牌
+            decision = 1;
+        }else if(num == 1){
+            //策略1：若能钓牌则钓牌，不能钓牌则换牌
+            decision = 2;
+            if (aiHoldValue[1] == 8 && aiHoldValue[2] == 8 && aiHoldValue[3] == 8 && aiHoldValue[0] !=8){
+                //只有当后三张都为8时，不钓牌
+                decision = 1;
+            }
+        }else if (num == 2){
+            //策略2：看到对方换到了某张牌，才钓牌，否则换牌
+            Movement lastMove = aiGamePlay.getLastMove(1);
+            if (lastMove.getCardValue() == aiHoldValue[chargePosition.get(0)] * 2){
+                decision = 2;
+            }
+        }
         return decision;
     }
 
