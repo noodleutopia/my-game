@@ -146,6 +146,19 @@ public class GamePlay {
     }
 
     /**
+     * 得到所有行动序列
+     * @param player 玩家编号，0为AI，1为玩家
+     * @return 行动序列
+     */
+    public List<Movement> getAllMove(int player){
+        if (player == 0){
+            return aiMoveSeq;
+        }
+        else {
+            return myMoveSeq;
+        }
+    }
+    /**
      * 获得最后一次行动
      * @param player 玩家编号，0为AI，1为PLAYER
      * @return 最后一次行动
@@ -163,6 +176,8 @@ public class GamePlay {
         }
         return lastMove;
     }
+
+
 
     /**
      * 记录本局手牌序列

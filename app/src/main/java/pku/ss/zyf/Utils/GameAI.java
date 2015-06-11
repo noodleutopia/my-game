@@ -28,6 +28,7 @@ public class GameAI{
     private MainActivity mainActivity = (MainActivity) MainActivity.getMyActivity();
     private Movement movement;
 
+
     public int aiThink(GamePlay gamePlay){
         this.aiGamePlay = gamePlay;
         this.bottomCards = gamePlay.getBottom();
@@ -62,7 +63,7 @@ public class GameAI{
 
     /**
      * 换牌或钓牌逻辑
-     * @param flag 标记
+     * @param flag 标记,1为换牌，2为钓牌
      */
     private void transformOrCharge(int flag){
         int [] aiHoldValue;
@@ -111,14 +112,16 @@ public class GameAI{
             //更新手牌
             aiHold = aiGamePlay.getAiHold();
             //若可以换牌
+
             if (transPosition.size() > 0){
-                Card tempCard;
-                if (aiHold.get(transPosition.get(0)).getValue() == 16)
+                int transPos = transPosChoice(transPosition);
+                Card tempCard; //   换到的牌
+                if (aiHold.get(transPosition.get(transPos)).getValue() == 16)
                     tempCard = new Card(2); //新增一张高一级的牌
                 else
-                    tempCard = new Card(aiHold.get(transPosition.get(0)).getValue() * 2); //新增一张高一级的牌
-                aiHold.remove(transPosition.get(0) + 1);    //移除两张手牌
-                aiHold.remove(transPosition.get(0).intValue());
+                    tempCard = new Card(aiHold.get(transPosition.get(transPos)).getValue() * 2); //新增一张高一级的牌
+                aiHold.remove(transPosition.get(transPos) + 1);    //移除两张手牌
+                aiHold.remove(transPosition.get(transPos).intValue());
                 aiHold.add(tempCard);
                 movement.setCardValue(tempCard.getValue());
                 if (tempCard.getValue() > 8)
@@ -191,6 +194,28 @@ public class GameAI{
     }
 
     /**
+     * 决定换牌位置
+     * @return 换牌位置
+     */
+    private int transPosChoice(List<Integer> transPosition){
+        int pos = 0;
+        if (transPosition.size() == 1){
+            pos = 0;
+        }
+        else{
+            //若有两个可选位置
+            aiHoldValue = aiGamePlay.getAiHoldValue();
+            Movement lastMove = aiGamePlay.getLastMove(1);
+            //若对方上一回合换到与自己较大位置相等的牌，则下回合有可能钓大一级的牌。故不换大牌
+            if (lastMove.getCardValue() == aiHoldValue[transPosition.get(1)]){
+                pos = 0;
+            }else if (lastMove.getCardValue() == aiHoldValue[transPosition.get(1)] * 2){
+                pos = 1;
+            }
+        }
+        return pos;
+    }
+    /**
      * 作出本回合动作的决定
      * @return 动作决定
      */
@@ -217,6 +242,9 @@ public class GameAI{
 
         return finalDecision;
     }
+
+
+
 
     /**
      * 策略制定机，可以选择使用哪一种AI
