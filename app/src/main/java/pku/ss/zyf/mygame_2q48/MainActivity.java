@@ -26,7 +26,7 @@ import pku.ss.zyf.bean.SetCards;
 
 public class MainActivity extends Activity implements View.OnClickListener,AdapterView.OnItemSelectedListener {
 
-    private TextView gameConditionTv, aiHoldTv, playerHoldTv_1, bottomCardsTv, aiMoveTv, playMoveTv_1, scoreBoardTv;
+    private TextView gameConditionTv, aiHoldTv, playerHoldTv_1, bottomCardsTv, aiMoveTv, playMoveTv_1, scoreBoardTv, aiLevelTv;
     private Button startBtn, transformBtn, chargeBtn, transBtn_1, transBtn_2, transBtn_3;
     private Spinner spinner;
     private ArrayAdapter<String> aiLevelAdapter;
@@ -105,6 +105,7 @@ public class MainActivity extends Activity implements View.OnClickListener,Adapt
         aiLevelAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(aiLevelAdapter);
         spinner.setOnItemSelectedListener(this);
+        aiLevelTv = (TextView) findViewById(R.id.ai_level_text);
 
     }
 
@@ -121,6 +122,7 @@ public class MainActivity extends Activity implements View.OnClickListener,Adapt
         }
         gamePlay.setBottom(bottomCards);
         gamePlay.setAiLevel(AI_LEVEL);  //设置游戏难度
+        Log.d("TEST", "游戏难度：" + String.valueOf(AI_LEVEL));
 
     }
 
@@ -250,6 +252,8 @@ public class MainActivity extends Activity implements View.OnClickListener,Adapt
             scoreBoardTv.setText("比分 Player : AI = " + myWin + " : " + aiWin);    //更改计分板
             scoreBoardTv.setVisibility(View.VISIBLE);
             bottomCardsTv.setVisibility(View.INVISIBLE);
+            aiLevelTv.setVisibility(View.VISIBLE);
+            spinner.setVisibility(View.VISIBLE);
             for (int i = 0; i < gamePlay.getAiMoveSeq().size(); i++){
                 Log.d("TEST","AI行动: " + gamePlay.getAiMoveSeq().get(i).toString());
             }
@@ -454,6 +458,8 @@ public class MainActivity extends Activity implements View.OnClickListener,Adapt
         //点击开始按钮
         if (v.equals(startBtn)){
             startBtn.setVisibility(View.GONE);
+            aiLevelTv.setVisibility(View.GONE);
+            spinner.setVisibility(View.GONE);
             nowCondition = GAME_START;
             winner = 0;
             Log.d("TEST",String.valueOf(round));
