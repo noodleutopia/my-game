@@ -235,7 +235,7 @@ public class GameAI{
         }
         if (chargePosition.size() > 0){
             //可以钓牌，执行决策函数
-            finalDecision = dicisionMaker(2);
+            finalDecision = dicisionMaker(aiGamePlay.getAiLevel());
         }else{
             finalDecision = 1;   //换牌
         }

@@ -9,7 +9,10 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -21,10 +24,13 @@ import pku.ss.zyf.bean.Movement;
 import pku.ss.zyf.bean.SetCards;
 
 
-public class MainActivity extends Activity implements View.OnClickListener {
+public class MainActivity extends Activity implements View.OnClickListener,AdapterView.OnItemSelectedListener {
 
     private TextView gameConditionTv, aiHoldTv, playerHoldTv_1, bottomCardsTv, aiMoveTv, playMoveTv_1, scoreBoardTv;
     private Button startBtn, transformBtn, chargeBtn, transBtn_1, transBtn_2, transBtn_3;
+    private Spinner spinner;
+    private ArrayAdapter<String> aiLevelAdapter;
+    private static final String[] aiLevleString={"容易","中等","困难"};
     public static final int GAME_START = 0;
     public static final int PLAYER_1_TURN = 1;
     public static final int AI_TURN = 2;
@@ -34,6 +40,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private static final int START_GAME = 1;
     private static final int WAIT_AI = 3;
     private static final int STOP_GAME = 2;
+    private static int AI_LEVEL = 0; //默认游戏难度为容易.共3级，0,1,2.
+
     private List<Card> bottomCards;     //底牌
 
     private int nowCondition = GAME_OVER;
@@ -92,6 +100,11 @@ public class MainActivity extends Activity implements View.OnClickListener {
         transBtn_2.setOnClickListener(this);
         transBtn_3 = (Button) findViewById(R.id.transform_3);
         transBtn_3.setOnClickListener(this);
+        spinner = (Spinner) findViewById(R.id.ai_level);
+        aiLevelAdapter = new ArrayAdapter<>(this,android.R.layout.simple_spinner_item,aiLevleString);
+        aiLevelAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(aiLevelAdapter);
+        spinner.setOnItemSelectedListener(this);
 
     }
 
@@ -107,6 +120,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
             bottomCards.add(setCards.getCard(i));
         }
         gamePlay.setBottom(bottomCards);
+        gamePlay.setAiLevel(AI_LEVEL);  //设置游戏难度
 
     }
 
@@ -546,5 +560,15 @@ public class MainActivity extends Activity implements View.OnClickListener {
             nowCondition = AI_TURN;
             gameCondition();
         }
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        AI_LEVEL = (position);
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
     }
 }

@@ -32,7 +32,6 @@
             android:textSize="50sp"
             android:text=""
             android:textColor="#ffffffff"
-
             />
     </RelativeLayout>
     <RelativeLayout
@@ -61,6 +60,22 @@
             android:text=""
             android:textColor="#ffffffff"
             />
+        <Spinner
+            android:id="@+id/ai_level"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true">
+        </Spinner>
+        <TextView
+            android:id="@+id/ai_level_text"
+            android:text="请选择游戏难度："
+            android:textSize="15sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@id/ai_level"/>
+
+
+
 
         <Button
             android:id="@+id/transform_1"

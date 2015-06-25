@@ -27,8 +27,7 @@ public class GamePlay {
     private List<int []> myHoldSeq = new ArrayList<>(); //手牌变化记录
     private List<int []> aiHoldSeq = new ArrayList<>();
 
-
-
+    private int aiLevel;
     private MyComparator comparator = new MyComparator();
 
     public List<Card> getMyHold() {
@@ -89,6 +88,14 @@ public class GamePlay {
     public String getMyMove() {
         String temp = myMove.substring(0,myMove.indexOf(":"));
         return temp;
+    }
+
+    public int getAiLevel() {
+        return aiLevel;
+    }
+
+    public void setAiLevel(int aiLevel) {
+        this.aiLevel = aiLevel;
     }
 
     public void setAiMove(String aiMove) {
