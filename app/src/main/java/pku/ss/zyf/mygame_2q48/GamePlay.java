@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.List;
 
 import pku.ss.zyf.Utils.MyComparator;
+import pku.ss.zyf.bean.AiSeeBean;
 import pku.ss.zyf.bean.Card;
 import pku.ss.zyf.bean.Movement;
 
@@ -26,6 +27,8 @@ public class GamePlay {
     private List<Movement> aiMoveSeq = new ArrayList<>();
     private List<int []> myHoldSeq = new ArrayList<>(); //手牌变化记录
     private List<int []> aiHoldSeq = new ArrayList<>();
+
+    private AiSeeBean aiSee = new AiSeeBean(); //AI记忆
 
     private int aiLevel;
     private MyComparator comparator = new MyComparator();
@@ -217,7 +220,50 @@ public class GamePlay {
         return res;
     }
 
+    public AiSeeBean getAiSee(){
+        return aiSee;
+    }
 
+    public void setAiSee(AiSeeBean aiSee){
+        this.aiSee = aiSee;
+    }
+
+    public float getBottomPercent(int cardValue){
+        float percent = 0;
+
+        float bottomHas = bottom.size();
+
+        switch (cardValue){
+            case 2:
+                percent = (36f - aiSee.getTwoCount()) / bottomHas;
+                break;
+            case 4:
+                percent = (6f - aiSee.getFourCount()) / bottomHas;
+                break;
+            case 8:
+                percent = (2f - aiSee.getEightCount()) / bottomHas;
+                break;
+            case 16:
+                percent = 0f;
+                break;
+        }
+        if (bottomHas != 0){
+            return 0;
+        }
+        return percent;
+    }
+
+    public boolean isOverHand(){
+        int [] aiHoldvalue = getAiHoldValue();
+        if (aiHoldvalue[3] == 16 && aiHoldvalue[2] == 16){
+            return true;
+        }else if (aiHoldvalue[3] == 16 && aiHoldvalue[2] == 8 && aiHoldvalue[1] == 8){
+            return true;
+        }else if (aiHoldvalue[3] == 8 && aiHoldvalue[2] == 8 && aiHoldvalue[1] == 8 && aiHoldvalue[0] == 8){
+            return true;
+        }
+        return false;
+    }
 
 }
 

@@ -1,207 +1,213 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin" tools:context=".MainActivity"
-    android:background="#ff444444">
-<RelativeLayout
-    android:background="#ffffffff"
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#ff444444"
+    tools:context=".MainActivity">
+
     <RelativeLayout
-        android:id="@+id/ai"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:background="#77ff0000"
-        >
-        <ImageView
-            android:id="@+id/ai_image"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:layout_marginLeft="20dp"
-            android:src="@drawable/ai_img"/>
-        <TextView
-            android:id="@+id/ai_hold_cards"
-            android:singleLine="true"
-            android:ellipsize="start"
-            android:layout_toRightOf="@id/ai_image"
-            android:layout_marginLeft="10dp"
+        android:background="#ffffffff">
+
+        <RelativeLayout
+            android:id="@+id/ai"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:textSize="50sp"
-            android:text=""
-            android:textColor="#ffffffff"
-            />
-    </RelativeLayout>
-    <RelativeLayout
-        android:id="@+id/player_1"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:background="#7700ff00"
-        android:layout_alignParentBottom="true"
+            android:background="#77ff0000">
 
-        >
-        <ImageView
-            android:id="@+id/player_1_image"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:layout_marginLeft="20dp"
-            android:src="@drawable/walle"/>
-        <TextView
-            android:id="@+id/player_1_hold_cards"
-            android:singleLine="true"
-            android:ellipsize="start"
-            android:layout_toRightOf="@id/player_1_image"
-            android:layout_marginLeft="10dp"
-            android:layout_width="200dp"
-            android:layout_height="wrap_content"
-            android:textSize="50sp"
-            android:text=""
-            android:textColor="#ffffffff"
-            />
-        <Spinner
-            android:id="@+id/ai_level"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true">
-        </Spinner>
-        <TextView
-            android:id="@+id/ai_level_text"
-            android:text="请选择游戏难度："
-            android:textSize="15sp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toLeftOf="@id/ai_level"/>
+            <ImageView
+                android:id="@+id/ai_image"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_marginLeft="20dp"
+                android:src="@drawable/ai_img" />
 
+            <TextView
+                android:id="@+id/ai_hold_cards"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_toRightOf="@id/ai_image"
+                android:ellipsize="start"
+                android:singleLine="true"
+                android:text=""
+                android:textColor="#ffffffff"
+                android:textSize="50sp" />
+        </RelativeLayout>
 
-
-
-        <Button
-            android:id="@+id/transform_1"
-            android:layout_width="wrap_content"
+        <RelativeLayout
+            android:id="@+id/player_1"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/player_1_hold_cards"
-            android:text="可能1"
-            android:visibility="gone"
-            />
-        <Button
-            android:id="@+id/transform_2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/transform_1"
-            android:text="可能2"
-            android:visibility="gone"
-            />
-        <Button
-            android:id="@+id/transform_3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/transform_2"
-            android:text="可能3"
-            android:visibility="gone"
-            />
-        <Button
-            android:id="@+id/transform_card"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:text="换牌"
-            android:visibility="gone"/>
-        <Button
-            android:id="@+id/charge_card"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toLeftOf="@id/transform_card"
-            android:text="钓牌"
-            android:visibility="gone"/>
-    </RelativeLayout>
-    <RelativeLayout
-        android:id="@+id/play_table"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_margin="5dp"
-        android:layout_above="@id/player_1"
-        android:layout_below="@id/ai"
-        android:background="#ffaaaaaa">
-        <TextView
-            android:id="@+id/ai_move_title"
-            android:layout_width="55dp"
-            android:layout_height="70dp"
-            android:layout_marginLeft="5dp"
-            android:text="AI:"
-            android:textSize="17sp"
-            android:textColor="#ffffffff"/>
-        <TextView
-            android:id="@+id/game_condition"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="游戏准备"
-            android:textSize="40sp"
-            android:textColor="#cc534654"
-            android:layout_alignParentRight="true"/>
-        <TextView
-            android:id="@+id/ai_move"
-            android:layout_width="300dp"
-            android:layout_height="70dp"
-            android:layout_toRightOf="@id/ai_move_title"
-            android:layout_toLeftOf="@id/game_condition"
-            android:text="未行动"
-            android:textSize="20sp"
-            android:textColor="#ffffffff"/>
-        <TextView
-            android:id="@+id/player_1_move_title"
-            android:layout_width="55dp"
-            android:layout_height="70dp"
-            android:layout_marginLeft="5dp"
-            android:text="Player:"
-            android:layout_below="@id/ai_move_title"
-            android:textSize="17sp"
-            android:textColor="#ffffffff"/>
-        <TextView
-            android:id="@+id/player_1_move"
-            android:layout_toRightOf="@id/player_1_move_title"
             android:layout_alignParentBottom="true"
-            android:layout_width="300dp"
-            android:layout_height="70dp"
-            android:text="未行动"
-            android:textSize="20sp"
-            android:textColor="#ffffffff"/>
+            android:background="#7700ff00"
 
-        <Button
-            android:id="@+id/start_btn"
-            android:layout_below="@id/game_condition"
-            android:layout_alignParentRight="true"
+            >
 
-            android:layout_width="100dp"
-            android:layout_height="40dp"
-            android:text="开始"/>
-        <TextView
-            android:id="@+id/bottom_cards"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="底牌数量：44"
-            android:textSize="15sp"
-            android:textColor="#aa534654"
-            android:layout_below="@id/start_btn"
-            android:layout_alignParentRight="true"
-            />
-        <TextView
-            android:id="@+id/score_board"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:visibility="gone"
-            android:text="比分 Player : AI = 0 : 0"
-            android:textSize="15sp"
-            android:textColor="#aa534654"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentBottom="true"
-            />
+            <ImageView
+                android:id="@+id/player_1_image"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_marginLeft="20dp"
+                android:src="@drawable/walle" />
+
+            <TextView
+                android:id="@+id/player_1_hold_cards"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_toRightOf="@id/player_1_image"
+                android:ellipsize="start"
+                android:singleLine="true"
+                android:text=""
+                android:textColor="#ffffffff"
+                android:textSize="50sp" />
+
+            <Spinner
+                android:id="@+id/ai_level"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"></Spinner>
+
+            <TextView
+                android:id="@+id/ai_level_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toLeftOf="@id/ai_level"
+                android:text="请选择游戏难度："
+                android:textSize="15sp" />
+
+
+            <Button
+                android:id="@+id/transform_1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/player_1_hold_cards"
+                android:text="可能1"
+                android:visibility="gone" />
+
+            <Button
+                android:id="@+id/transform_2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/transform_1"
+                android:text="可能2"
+                android:visibility="gone" />
+
+            <Button
+                android:id="@+id/transform_3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/transform_2"
+                android:text="可能3"
+                android:visibility="gone" />
+
+            <Button
+                android:id="@+id/transform_card"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:text="换牌"
+                android:visibility="gone" />
+
+            <Button
+                android:id="@+id/charge_card"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toLeftOf="@id/transform_card"
+                android:text="钓牌"
+                android:visibility="gone" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/play_table"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_above="@id/player_1"
+            android:layout_below="@id/ai"
+            android:background="#ffaaaaaa">
+
+            <TextView
+                android:id="@+id/ai_move_title"
+                android:layout_width="55dp"
+                android:layout_height="70dp"
+                android:layout_marginLeft="5dp"
+                android:text="AI:"
+                android:textColor="#ffffffff"
+                android:textSize="17sp" />
+
+            <TextView
+                android:id="@+id/game_condition"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:text="游戏准备"
+                android:textColor="#cc534654"
+                android:textSize="40sp" />
+
+            <TextView
+                android:id="@+id/ai_move"
+                android:layout_width="300dp"
+                android:layout_height="70dp"
+                android:layout_toLeftOf="@id/game_condition"
+                android:layout_toRightOf="@id/ai_move_title"
+                android:text="未行动"
+                android:textColor="#ffffffff"
+                android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/player_1_move_title"
+                android:layout_width="55dp"
+                android:layout_height="70dp"
+                android:layout_below="@id/ai_move_title"
+                android:layout_marginLeft="5dp"
+                android:text="Player:"
+                android:textColor="#ffffffff"
+                android:textSize="17sp" />
+
+            <TextView
+                android:id="@+id/player_1_move"
+                android:layout_width="300dp"
+                android:layout_height="70dp"
+                android:layout_alignParentBottom="true"
+                android:layout_toRightOf="@id/player_1_move_title"
+                android:text="未行动"
+                android:textColor="#ffffffff"
+                android:textSize="20sp" />
+
+            <Button
+                android:id="@+id/start_btn"
+                android:layout_width="100dp"
+                android:layout_height="40dp"
+
+                android:layout_alignParentRight="true"
+                android:layout_below="@id/game_condition"
+                android:text="开始" />
+
+            <TextView
+                android:id="@+id/bottom_cards"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_below="@id/start_btn"
+                android:text="底牌数量：44"
+                android:textColor="#aa534654"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/score_board"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:text="比分 Player : AI = 0 : 0"
+                android:textColor="#aa534654"
+                android:textSize="15sp"
+                android:visibility="gone" />
         </RelativeLayout>
     </RelativeLayout>
-
-
 
 
 </RelativeLayout>

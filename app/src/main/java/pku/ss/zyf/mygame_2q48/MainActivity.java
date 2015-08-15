@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import pku.ss.zyf.Utils.GameAI;
+import pku.ss.zyf.bean.AiSeeBean;
 import pku.ss.zyf.bean.Card;
 import pku.ss.zyf.bean.Movement;
 import pku.ss.zyf.bean.SetCards;
@@ -121,6 +122,7 @@ public class MainActivity extends Activity implements View.OnClickListener,Adapt
             bottomCards.add(setCards.getCard(i));
         }
         gamePlay.setBottom(bottomCards);
+        gamePlay.setAiSee(new AiSeeBean());
         gamePlay.setAiLevel(AI_LEVEL);  //设置游戏难度
         Log.d("TEST", "游戏难度：" + String.valueOf(AI_LEVEL));
 
@@ -255,7 +257,7 @@ public class MainActivity extends Activity implements View.OnClickListener,Adapt
             aiLevelTv.setVisibility(View.VISIBLE);
             spinner.setVisibility(View.VISIBLE);
             for (int i = 0; i < gamePlay.getAiMoveSeq().size(); i++){
-                Log.d("TEST","AI行动: " + gamePlay.getAiMoveSeq().get(i).toString());
+                Log.d("TEST","AI行动: " + gamePlay.getAiMoveSeq().get(i));
             }
         }
     }

@@ -206,6 +206,10 @@ public class GameAI{
             //若有两个可选位置
             aiHoldValue = aiGamePlay.getAiHoldValue();
             Movement lastMove = aiGamePlay.getLastMove(1);
+            if (aiGamePlay.isOverHand()){
+                //若爆牌，换小牌
+                return  0;
+            }
             //若对方上一回合换到与自己较大位置相等的牌，则下回合有可能钓大一级的牌。故不换大牌
             if (lastMove.getCardValue() == aiHoldValue[transPosition.get(1)]){
                 pos = 0;
@@ -269,6 +273,13 @@ public class GameAI{
             Movement lastMove = aiGamePlay.getLastMove(1);
             if (lastMove.getCardValue() == aiHoldValue[chargePosition.get(0)] * 2){
                 decision = 2;
+            }else if (aiHoldValue[0] == 2 && aiHoldValue[1] == 2 && aiHoldValue[2] == 2){
+                decision = 2;
+            }else if (aiHoldValue[0] == 4 && aiHoldValue[1] == 4 && aiHoldValue[2] == 4 && aiHoldValue[3] == 16){
+                if (aiGamePlay.getBottomPercent(2) < 0.7f){
+                    //会爆牌几率超过70%
+                    decision = 2;
+                }
             }
         }
         return decision;
